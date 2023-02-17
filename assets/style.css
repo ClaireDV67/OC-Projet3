@@ -251,7 +251,7 @@ footer nav ul {
 	height: 50px;
 }
 
-.bouton-connecter {
+#bouton-connecter {
 	height: 36px;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
@@ -263,4 +263,14 @@ footer nav ul {
 
 .mdp-oublie {
 	color: inherit;
+}
+
+a {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+#erreur {
+	color: red;
+	margin: 20px;
 }
