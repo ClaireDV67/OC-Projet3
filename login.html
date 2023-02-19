@@ -12,13 +12,13 @@
 </head>
 <body>
 <header>
-	<h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
+	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li><a href="index.html">projets</a></li>
-			<li>contact</li>
-			<li class="nav-actif">login</li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			<li><a href="#">contact</a></li>
+			<li class="nav-active"><a href="#">login</a></li>
+			<li><a href="#"><img src="./assets/icons/instagram.png" alt="Instagram"></a></li>
 		</ul>
 	</nav>
 </header>
@@ -26,18 +26,18 @@
 <main>
     <section id="login">
         <form class="form" id="form">
-            <h2 class="log-titre">Log In</h2>
-            <div class="form-connexion">
-                <label class="label-connexion" for="email">E-mail</label>
-                <input class="zone-texte" id="email" type="text" name="email" minlength="5" maxlength="50" required>
+            <h2 class="log-title">Log In</h2>
+            <div class="form-login">
+                <label class="label-login" for="email">E-mail</label>
+                <input class="text-zone" id="email" type="text" name="email" minlength="5" maxlength="50" autofocus required>
             </div>
-            <div class="form-connexion">
-                <label class="label-connexion" for="mot-de-passe">Mot de passe</label>
-                <input class="zone-texte" id="mot-de-passe" type="password" name="mot-de-passe" minlength="5" maxlength="15" required>
+            <div class="form-login">
+                <label class="label-login" for="password">Mot de passe</label>
+                <input class="text-zone" id="password" type="password" name="password" minlength="5" maxlength="15" required>
             </div>			
-			<span id="erreur"></span>
-            <input id="bouton-connecter" type="submit" value="Se connecter">
-            <a href="#" class="mdp-oublie">Mot de passe oublié</a>
+			<span id="error"></span>
+            <input id="button-login" type="submit" value="Se connecter">
+            <a href="#" class="password-forget">Mot de passe oublié</a>
         </form>
     </section>
 </main>
@@ -49,6 +49,6 @@
 		</ul>
 	</nav>
 </footer>
-<script src="connexion.js"></script>
+<script src="login.js"></script>
 </body>
 </html>

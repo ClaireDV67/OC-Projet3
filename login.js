@@ -5,12 +5,11 @@ function connect(e) {
     fetch("http://localhost:5678/api/users/login", {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             email: document.getElementById('email').value,
-            password: document.getElementById('mot-de-passe').value
+            password: document.getElementById('password').value
         })
     })
     .then(res => {
@@ -19,7 +18,7 @@ function connect(e) {
             return res.json();
         } else {
             document
-            .getElementById('erreur')
+            .getElementById('error')
             .textContent = "E-mail ou mot de passe invalide";
         }
     })
@@ -31,9 +30,6 @@ function connect(e) {
 
     .catch(err => {
         console.log(err);
-        document
-            .getElementById('erreur')
-            .textContent = "Erreur, veuillez réessayer ultérieurement";
     })
 };
 
