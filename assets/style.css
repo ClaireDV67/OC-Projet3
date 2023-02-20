@@ -237,7 +237,7 @@ footer nav ul {
 	align-items: center;
 }
 
-.form-login {
+.form-element {
 	display: flex;
 	flex-direction: column;
 	font-weight: 500;
@@ -257,7 +257,7 @@ footer nav ul {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-.label-login {
+.label {
 	margin: 2em 0 1em 0;
 }
 
@@ -330,7 +330,7 @@ a {
 	justify-content: center;
 	position: relative;
 	left: 48px;
-	margin-bottom: 50px;
+	margin-bottom: 10px;
 }
 
 #button-portfolio {
@@ -339,17 +339,32 @@ a {
 	bottom: 3px;
 }
 
+#button-article {
+	position: relative;
+	bottom: 20px;
+}
+
 /* Boîte modale */
 #title-modal {
 	font-size: 26px;
 	text-align: center;
 }
 
-#modal-works {
-	margin: 40px 0 40px 0;
+#modal-content {
+	margin: 40px 0 20px 0;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+}
+
+#modal-icon {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+	position: absolute;
+	right: 30px;
+	top: 30px;
+	width: 90%;
 }
 
 .modal-work {
@@ -369,7 +384,7 @@ a {
 	font-weight: 700;
 	color: white;
 	background-color: #1D6154;
-	width: 180px;
+	width: 30%;
 	text-align: center;
 	border-radius: 60px ;
 	padding: 10px 40px 10px 40px;
@@ -384,11 +399,21 @@ a {
 	margin: 15px;
 }
 
+.button-disabled {
+	font-weight: 700;
+	color: white;
+	background-color:  #A7A7A7;
+	width: 30%;
+	text-align: center;
+	border-radius: 60px ;
+	padding: 10px 40px 10px 40px;
+}
+
 .button-container {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 30px;
+	padding: 20px;
 	border-top: 1px solid #B3B3B3;
 }
 
@@ -418,12 +443,6 @@ a {
 	position: relative;
 }
 
-.modal-close {
-	position: absolute;
-	right: 20px;
-	top: 20px;
-}
-
 .modal-close:focus {
 	box-shadow: 0 0 10px black;
 }
@@ -432,7 +451,7 @@ a {
 	animation: fadeOut 300ms both;
 }
 
-.icone-modale {
+.icone-modal {
 	color: white;
 	background-color: black;
 	padding: 10px 5px 10px 5px;
@@ -440,10 +459,49 @@ a {
 	border-radius: 2px;
 }
 
-.icone-modale-container {
+.icone-modal-container {
 	position: absolute;
 	top: 0;
 	right: 0;
+}
+
+.form-modal {
+	width: 100%;
+}
+
+.input-modal {
+	width: 100%;
+}
+
+.fa-image {
+	color: #B9C5CC;
+	margin-top: 30px;
+}
+
+.add-picture-container {
+	background-color: #E8F1F7;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	padding: 15px 0 15px 0;
+}
+
+.txt-add-picture {
+	font-size: 10px;
+	color: #444444;
+}
+
+.button-add-picture {
+	width: 25%;
+	text-align: center;
+	border-radius: 60px ;
+	padding: 10px 40px 10px 40px;
+	background-color: #CBD6DC;;
+	color: #306685;
+	margin-top: 30px;
+	margin-bottom: 7px;
+	font-weight: 500;
 }
 
 @keyframes fadeIn {
