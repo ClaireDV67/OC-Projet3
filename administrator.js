@@ -78,37 +78,42 @@ if (token != null) {
     const iconBack = document.createElement('a');
     iconBack.href = '#';
     iconBack.innerHTML = '<i class="fa-solid fa-arrow-left fa-xl"></i>';
+    const iconeFirst = document.createElement('button');
+    iconeFirst.innerHTML = "<i class='fa-solid fa-arrows-up-down-left-right fa-xs icone-modal'></i>";
     
 
     // Contenu de la première modale
-    // Récupération des projets
-    const reponse = await fetch('http://localhost:5678/api/works');
-    const worksModal = await reponse.json();
-
-    async function deleteWorks(e, id) {
-        console.log("ffqf");
-        const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+    function deleteWorks(e, id) {
+        e.preventDefault();
+        fetch(`http://localhost:5678/api/works/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-        });
-        if (response.ok) {
-            console.log("ok")
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        // .then(res => {
-        //     if (res.ok) {
-        //         // const work = document.getElementById(`modal-work-${id}`);
-        //         // contentModal.removeChild(work);
-        //         // return res.json();
-        //     }
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // })
+        })
+        .then(res => {
+            if (res.ok) {
+                const workModal = document.getElementById(`modal-work-${id}`);
+                const workGallery = document.getElementById(`work-${id}`);
+                const gallery = document.querySelector('.gallery');
+                contentModal.removeChild(workModal);
+                gallery.removeChild(workGallery);
+                const iconeTrash = document.getElementById(`trash-works-${Number(id) + 1}`);
+                console.log(iconeTrash);
+                const icone = document.getElementById(`icone-container-${Number(id) + 1}`);
+                console.log(icone);
+                icone.insertBefore(iconeFirst, iconeTrash);
+                // return res.json();
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
     }
+
+    // Récupération des projets
+    const reponse = await fetch('http://localhost:5678/api/works');
+    const worksModal = await reponse.json();
 
     // Création de la fonction permettant de générer les fiches projets dans la modale
     async function generateWorksModal(worksModal) {
@@ -130,15 +135,15 @@ if (token != null) {
             work.appendChild(titleWork);
             const icone = document.createElement("span");
             icone.classList.add('icone-modal-container');
-            if (workElement == worksModal[0]) {
-                icone.innerHTML = `<button><i class='fa-solid fa-arrows-up-down-left-right fa-xs icone-modal'></i></button><button id='trash-works-${workElement.id}'><i class='fa-solid fa-trash-can fa-xs icone-modal'></i></button>`;
-            } else {
-                icone.innerHTML = `<button id='trash-works-${workElement.id}'><i class='fa-solid fa-trash-can icone-modal fa-xs'></i></button>`;
-            }
+            icone.setAttribute('id', `icone-container-${workElement.id}`);
+            icone.innerHTML = `<button class='button-trash' id='trash-works-${workElement.id}'><i class='fa-solid fa-trash-can icone-modal fa-xs'></i></button>`;
             work.appendChild(icone);
+            if (work == contentModal.firstElementChild) {
+                const iconeTrash = document.querySelector('.button-trash');
+                icone.insertBefore(iconeFirst, iconeTrash);
+            }
             const trashWorks = document.getElementById(`trash-works-${workElement.id}`);
-            trashWorks.addEventListener('click', (e) => {e.preventDefault();
-                deleteWorks(e, workElement.id)});
+            trashWorks.addEventListener('click', (e) => deleteWorks(e, workElement.id));
         }
     }
 

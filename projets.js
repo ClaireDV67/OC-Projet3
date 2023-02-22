@@ -11,6 +11,7 @@ async function generateWorks(works) {
         const gallery = document.querySelector(".gallery");
         // Création d'une fiche projet, rattachée à la galerie
         const work = document.createElement("article");
+        work.setAttribute('id', `work-${workElement.id}`);
         gallery.appendChild(work);
         // Création de l'image, rattachée à la fiche projet
         const imageWork = document.createElement("img");
