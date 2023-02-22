@@ -2,7 +2,7 @@
 
 // Récupération des projets
 const reponse = await fetch('http://localhost:5678/api/works');
-export const works = await reponse.json();
+const worksData = await reponse.json();
 
 // Création de la fonction permettant de générer les fiches projets
 async function generateWorks(works) {
@@ -23,7 +23,7 @@ async function generateWorks(works) {
     }
 }
 // On appelle la fonction pour générer les fiches
-generateWorks(works);
+generateWorks(worksData);
 
 
 
@@ -65,9 +65,9 @@ async function generateFilters(categories) {
 
     for (let filter of buttonFilter) {
         filter.addEventListener("click", function () {
-            const filteredWorks = works.filter(function (work) {
+            const filteredWorks = worksData.filter(function (work) {
                 if (filter.innerText === "Tous") {
-                    return works;
+                    return worksData;
                 } else {
                     return work.category.name === filter.innerText;
                 }

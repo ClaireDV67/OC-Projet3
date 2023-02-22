@@ -85,6 +85,31 @@ if (token != null) {
     const reponse = await fetch('http://localhost:5678/api/works');
     const worksModal = await reponse.json();
 
+    async function deleteWorks(e, id) {
+        console.log("ffqf");
+        const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response.ok) {
+            console.log("ok")
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        // .then(res => {
+        //     if (res.ok) {
+        //         // const work = document.getElementById(`modal-work-${id}`);
+        //         // contentModal.removeChild(work);
+        //         // return res.json();
+        //     }
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        // })
+    }
+
     // Création de la fonction permettant de générer les fiches projets dans la modale
     async function generateWorksModal(worksModal) {
         // Création des fiches projets de la modale
@@ -112,25 +137,8 @@ if (token != null) {
             }
             work.appendChild(icone);
             const trashWorks = document.getElementById(`trash-works-${workElement.id}`);
-            trashWorks.addEventListener('click', async function deleteWorks(e) {
-                e.preventDefault();
-                await fetch(`http://localhost:5678/api/works/${workElement.id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-                .then(res => {
-                    if (res.ok) {
-                        // const work = document.getElementById(`modal-work-${id}`);
-                        // contentModal.removeChild(work);
-                        return res.json();
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-            });
+            trashWorks.addEventListener('click', (e) => {e.preventDefault();
+                deleteWorks(e, workElement.id)});
         }
     }
 
@@ -266,7 +274,7 @@ if (token != null) {
             buttonModal.removeChild( buttonModal.firstChild);
         }
         const formModal = document.querySelector('.form-modal');
-        modalWrapper.removeChild(buttonModal);
+        // modalWrapper.removeChild(buttonModal);
         formModal.appendChild(buttonModal);
         buttonValidate.setAttribute('type', 'submit');
         buttonValidate.setAttribute('value', 'Valider');
@@ -292,15 +300,17 @@ if (token != null) {
             categoriesModal.appendChild(optionCategoriesModal);
             optionCategoriesModal.innerText = `${categorie}`;
         }
-        async function postWork() {
-            var formData = new FormData(formModal);
-            // formData.append('image', document.getElementById('button-add-picture-input').files[0], document.getElementById('button-add-picture-input').files[0].type);
-            // formData.append('title', document.getElementById('title-modal-add').value);
-            // formData.append('category', document.getElementById('category-modal').value);
-            await fetch('http://localhost:5678/api/works', {
+        function postWork() {
+            // const formModal = document.querySelector('.form-modal');
+            console.log('dfsf')
+            var formData = new FormData();
+            formData.append('image', document.getElementById('button-add-picture-input').files[0]);
+            formData.append('title', document.getElementById('title-modal-add').value);
+            formData.append('category', document.getElementById('category-modal').value);
+            fetch('http://localhost:5678/api/works', {
                 method: 'POST',
                 headers: {
-                    // 'accept': 'application/json',
+                    'accept': 'application/json',
                     // 'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
@@ -308,6 +318,7 @@ if (token != null) {
             })
             .then(res => {
                 if (res.ok) {
+                    console.log('Réussi !')
                     return res.json();
                 }
             })
@@ -315,7 +326,8 @@ if (token != null) {
                 console.log(err);
             })
         };
-        formModal.addEventListener('submit', postWork);
+        console.log('ici')
+        buttonValidate.addEventListener('click', () => console.log('fonction'));
     }
     
     buttonAdd.addEventListener('click', changeModal);
