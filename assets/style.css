@@ -399,22 +399,35 @@ a {
 	margin: 15px;
 }
 
-.button-disabled {
+.button-add-work[disabled] {
+	background-color:  #A7A7A7;
 	font-weight: 700;
 	color: white;
-	background-color:  #A7A7A7;
-	width: 30%;
+	width: 50%;
 	text-align: center;
 	border-radius: 60px ;
 	padding: 10px 40px 10px 40px;
+	border: none;
 }
 
 .button-container {
+	margin-top: 40px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	padding: 20px;
 	border-top: 1px solid #B3B3B3;
+}
+
+.button-add-work[disabled = "false"] {
+	background-color: #1D6154;
+	font-weight: 700;
+	color: white;
+	width: 50%;
+	text-align: center;
+	border-radius: 60px ;
+	padding: 10px 40px 10px 40px;
+	cursor: pointer;
 }
 
 .modal {
@@ -455,7 +468,6 @@ a {
 	color: white;
 	background-color: black;
 	padding: 10px 5px 10px 5px;
-	margin: 5px 5px 5px 0;
 	border-radius: 2px;
 }
 
@@ -473,9 +485,29 @@ a {
 	width: 100%;
 }
 
+button {
+	background-color: inherit;
+	border: none;
+	cursor: pointer;
+	padding: inherit;
+	margin: 5px 5px 5px 0;
+}
+
 .fa-image {
 	color: #B9C5CC;
-	margin-top: 30px;
+	margin-top: 20px;
+}
+
+#preview-picture {
+	height: 100%;
+	margin: auto;
+}
+
+.preview-container {
+	background-color: #E8F1F7;
+	max-height: 250px;
+	display: flex;
+	justify-content: center;
 }
 
 .add-picture-container {
@@ -492,16 +524,25 @@ a {
 	color: #444444;
 }
 
-.button-add-picture {
+#button-add-picture {
 	width: 25%;
 	text-align: center;
 	border-radius: 60px ;
 	padding: 10px 40px 10px 40px;
 	background-color: #CBD6DC;;
 	color: #306685;
-	margin-top: 30px;
+	margin-top: 20px;
 	margin-bottom: 7px;
 	font-weight: 500;
+	cursor: pointer;
+}
+
+#button-add-picture-input{
+	display: none;
+}
+
+#category-modal, #title-modal-add {
+	font-family: 'Work Sans' ;
 }
 
 @keyframes fadeIn {

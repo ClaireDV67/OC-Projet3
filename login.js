@@ -24,8 +24,8 @@ function connect(e) {
     })
 
     .then(value => {
-        window.localStorage.setItem("userId", value.userId);
-        window.localStorage.setItem("token", value.token);
+        window.sessionStorage.setItem("userId", value.userId);
+        window.sessionStorage.setItem("token", value.token);
     })  
 
     .catch(err => {
