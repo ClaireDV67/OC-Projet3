@@ -255,6 +255,7 @@ footer nav ul {
 	height: 36px;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	cursor: pointer;
 }
 
 .label {
@@ -420,7 +421,7 @@ a {
 	border-top: 1px solid #B3B3B3;
 }
 
-.button-add-work[disabled = "false"] {
+.button-add-work {
 	background-color: #1D6154;
 	font-weight: 700;
 	color: white;
@@ -429,6 +430,7 @@ a {
 	border-radius: 60px ;
 	padding: 10px 40px 10px 40px;
 	cursor: pointer;
+	border: none;
 }
 
 .modal {

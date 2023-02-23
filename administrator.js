@@ -1,5 +1,4 @@
 const token = window.sessionStorage.getItem("token");
-console.log(token);
 if (token != null) {
     // Ajout de la bannière
     const body = document.querySelector('body');
@@ -67,7 +66,7 @@ if (token != null) {
     buttonDelete.href = '#';
     buttonDelete.classList.add('button-delete', 'button-modale');
     buttonDelete.innerText = 'Supprimer la galerie';
-    const contentModal = document.getElementById("modal-content");
+    let contentModal = document.getElementById("modal-content");
     const buttonValidate = document.createElement('input');
     const iconModal = document.getElementById('modal-icon');
     const iconClose = document.createElement('a');
@@ -83,6 +82,7 @@ if (token != null) {
     
 
     // Contenu de la première modale
+    let workDeleted = [];
     function deleteWorks(e, id) {
         e.preventDefault();
         fetch(`http://localhost:5678/api/works/${id}`, {
@@ -96,13 +96,18 @@ if (token != null) {
                 const workModal = document.getElementById(`modal-work-${id}`);
                 const workGallery = document.getElementById(`work-${id}`);
                 const gallery = document.querySelector('.gallery');
-                contentModal.removeChild(workModal);
                 gallery.removeChild(workGallery);
-                const iconeTrash = document.getElementById(`trash-works-${Number(id) + 1}`);
-                console.log(iconeTrash);
-                const icone = document.getElementById(`icone-container-${Number(id) + 1}`);
-                console.log(icone);
-                icone.insertBefore(iconeFirst, iconeTrash);
+                if (workModal == contentModal.firstElementChild && contentModal.childNodes > 1) {
+                    let idTrash = id + 1;
+                    while (document.getElementById(`trash-works-${Number(idTrash)}`) == null) {
+                        idTrash++;
+                    }
+                    const iconeTrash = document.getElementById(`trash-works-${idTrash}`);
+                    const icone = document.getElementById(`icone-container-${idTrash}`);
+                    icone.insertBefore(iconeFirst, iconeTrash);
+                }
+                contentModal.removeChild(workModal);
+                workDeleted.push(id);
                 // return res.json();
             }
         })
@@ -179,6 +184,10 @@ if (token != null) {
             buttonModal.appendChild(buttonDelete);
             contentModal.innerHTML = '';
             generateWorksModal(worksModal);
+            for (let id of workDeleted) {
+                const workModal = document.getElementById(`modal-work-${id}`);
+                contentModal.removeChild(workModal);
+            }
         };
         // Fermeture de la modale
         function closeModal(e) {
@@ -245,6 +254,10 @@ if (token != null) {
         buttonModal.appendChild(buttonDelete);
         contentModal.innerHTML = '';
         generateWorksModal(worksModal);
+        for (let id of workDeleted) {
+            const workModal = document.getElementById(`modal-work-${id}`);
+            contentModal.removeChild(workModal);
+        }
     }
 
     // Récupération des catégories
@@ -290,9 +303,9 @@ if (token != null) {
         const categoriesModal = document.getElementById('category-modal');
         function isComplete() {
             if (buttonAddPicture.value != '' && titleAddInput.value != '' && categoriesModal.value != '') {
-                buttonValidate.setAttribute('disabled', 'false');
+                buttonValidate.removeAttribute('disabled');
             } else {
-                buttonValidate.setAttribute('disabled', 'true');
+                buttonValidate.setAttribute('disabled', '');
             }
         }
         buttonAddPicture.addEventListener('change', isComplete);
@@ -305,13 +318,16 @@ if (token != null) {
             categoriesModal.appendChild(optionCategoriesModal);
             optionCategoriesModal.innerText = `${categorie}`;
         }
+        
         function postWork() {
-            // const formModal = document.querySelector('.form-modal');
-            console.log('dfsf')
             var formData = new FormData();
             formData.append('image', document.getElementById('button-add-picture-input').files[0]);
             formData.append('title', document.getElementById('title-modal-add').value);
             formData.append('category', document.getElementById('category-modal').value);
+            console.log(document.getElementById('button-add-picture-input').files[0]);
+            console.log(JSON.stringify(Object.fromEntries(formData)));
+            alert(formData);
+            alert(JSON.stringify(formData));
             fetch('http://localhost:5678/api/works', {
                 method: 'POST',
                 headers: {
@@ -319,20 +335,20 @@ if (token != null) {
                     // 'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
-                body: formData
+                body: JSON.stringify(Object.fromEntries(formData))
             })
             .then(res => {
                 if (res.ok) {
-                    console.log('Réussi !')
+                    alert('Réussi !')
                     return res.json();
                 }
             })
             .catch(err => {
+                alert('err');
                 console.log(err);
             })
         };
-        console.log('ici')
-        buttonValidate.addEventListener('click', () => console.log('fonction'));
+        formModal.addEventListener('submit', postWork);
     }
     
     buttonAdd.addEventListener('click', changeModal);
