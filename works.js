@@ -1,8 +1,8 @@
-// Fiches projets
+// Importation des données des requêtes GET pour obtenir les projets et les catégories
+import { worksData, categories } from './get.js';
 
-// Récupération des projets
-const reponse = await fetch('http://localhost:5678/api/works');
-const worksData = await reponse.json();
+
+// Fiches projets
 
 // Création de la fonction permettant de générer les fiches projets
 async function generateWorks(works) {
@@ -10,7 +10,7 @@ async function generateWorks(works) {
     for (let workElement of works) {    
         const gallery = document.querySelector(".gallery");
         // Création d'une fiche projet, rattachée à la galerie
-        const work = document.createElement("article");
+        const work = document.createElement("figure");
         work.setAttribute('id', `work-${workElement.id}`);
         gallery.appendChild(work);
         // Création de l'image, rattachée à la fiche projet
@@ -18,7 +18,7 @@ async function generateWorks(works) {
         imageWork.src = workElement.imageUrl;
         work.appendChild(imageWork);
         // Création du titre, rattaché à la fiche projet
-        const titleWork = document.createElement("h3");
+        const titleWork = document.createElement("figcaption");
         titleWork.innerText = workElement.title;
         work.appendChild(titleWork);
     }
@@ -27,26 +27,20 @@ async function generateWorks(works) {
 generateWorks(worksData);
 
 
-
 // Filtres
-
-// Récupération des catégories
-const reponseCat = await fetch('http://localhost:5678/api/categories');
-const categories = await reponseCat.json();
 
 // Création de la fonction permettant de générer des filtres fonctionnels
 async function generateFilters(categories) {
-    // Récupération des noms des catégories
-    const categoriesNames = categories.map(categorie => categorie.name);
-    // Vérification de l'unicité de chaque catégorie
-    const categoriesSet = new Set();
-    categoriesSet.add("Tous");
-    for (let i in categoriesNames) {
-        categoriesSet.add(categoriesNames[i])
+    // Vérification de l'unicité de chaque nom de catégorie
+    const categoriesNames = new Set();
+    // Création du filtre 'Tous'
+    categoriesNames.add("Tous");
+    for (let i in categories) {
+        categoriesNames.add(categories[i].name)
     };
     // Création des boutons filtres
     const filters = document.getElementById("filters");
-    for (let categorie of categoriesSet) {
+    for (let categorie of categoriesNames) {
         const filter = document.createElement("li");
         filters.appendChild(filter);
         const link = document.createElement("a");
@@ -57,11 +51,11 @@ async function generateFilters(categories) {
         link.innerText = `${categorie}`;
     }
 
-    // Initialisation du filtre "Tous"
+    // Initialisation du filtre "Tous" comme onglet actif
     const filterAll = document.querySelector(".filter");
     filterAll.classList.add('filter-active');
 
-    // Mise en place du filtrage
+    // Mise en place du filtrage lors du clic sur un onglet filtre
     const buttonFilter = document.querySelectorAll(".link");
 
     for (let filter of buttonFilter) {
@@ -73,12 +67,14 @@ async function generateFilters(categories) {
                     return work.category.name === filter.innerText;
                 }
             });
+            // On affecte la classe donnant le style de l'onglet actif au filtre actuellement actif
             document.querySelector('.filter-active').classList.remove('filter-active');
             filter.parentElement.classList.add('filter-active');
+            // On génère les projets filtrés après avoir effacé le contenu de la galerie précédente
             document.querySelector(".gallery").innerHTML = '';
             generateWorks(filteredWorks);
         })
     }
 }
-
+// On appelle la fonction pour générer les fiches filtrées
 generateFilters(categories);
