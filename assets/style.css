@@ -277,12 +277,17 @@ a {
 	text-decoration: inherit;
 }
 
+/* Erreurs */
 .error {
 	color: red;
 	margin: 20px;
 }
 
-/* Accueil administrateur */
+.empty {
+	margin: auto;
+}
+
+/* Bannière */
 .banner {
 	background-color: black;
 	height: 59px;
@@ -311,12 +316,13 @@ a {
 	font-size: 14px;
 }
 
-.fa-pen-to-square {
-	margin-right: 5px;
-}
-
 .header-administrator {
 	margin-top: 109px;
+}
+
+/* Boutons 'modifier' */
+.fa-pen-to-square {
+	margin-right: 5px;
 }
 
 #image-introduction {
@@ -356,15 +362,39 @@ a {
 	font-size: 26px;
 	text-align: center;
 }
-
+/* Partie principale de la modale */
 #modal-content {
 	margin: 40px 0 20px 0;
+}
+/* Fiches projet de la modale */
+.modal1 {
+	width: 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-column-gap: 10px;
+	grid-row-gap: 10px;
+}
+
+.modal1 figure {
+	height: 120px;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+.modal1 img {
+	height: 100%;
+	width: 100%;
+	object-fit: cover;
+}
+
+/* Contenu de la seconde modale */
+.modal2 {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
 }
-
+/* Icônes retour en arrière et croix */
 #modal-icon {
 	display: flex;
 	flex-direction: row-reverse;
@@ -374,20 +404,7 @@ a {
 	top: 30px;
 	width: 90%;
 }
-
-.modal-work {
-	height: 120px;
-	width: 18%;
-	margin-bottom: 15px;
-	position: relative;
-}
-
-.modal-work img {
-	object-fit: cover;
-	height: 104px;
-	width: 100%;
-}
-
+/* Bouton 'ajouter une photo' */
 .button-add {
 	font-weight: 700;
 	color: white;
@@ -397,16 +414,16 @@ a {
 	border-radius: 60px ;
 	padding: 10px 40px 10px 40px;
 }
-
+/* Bouton 'supprimer la galerie' */
 .button-delete {
 	color: #D65353;
 }
-
-.button-modale {
+/* Boutons de la modale */
+.button-modal {
 	font-family: 'Syne';
 	margin: 15px;
 }
-
+/* Bouton 'valider' de la modale*/
 .button-add-work[disabled] {
 	background-color:  #A7A7A7;
 	font-weight: 700;
@@ -417,15 +434,6 @@ a {
 	padding: 10px 40px 10px 40px;
 	border: none;
 	cursor: inherit;
-}
-
-.button-container {
-	margin-top: 40px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 20px;
-	border-top: 1px solid #B3B3B3;
 }
 
 .button-add-work {
@@ -440,6 +448,16 @@ a {
 	border: none;
 }
 
+/* Conteneur boutons de la modale */
+.button-container {
+	margin-top: 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px;
+	border-top: 1px solid #B3B3B3;
+}
+/* Modale et animation à l'ouverture */
 .modal {
 	position: fixed;
 	top: 0;
@@ -465,28 +483,30 @@ a {
 	border-radius: 10px;
 	position: relative;
 }
-
-.modal-close:focus {
+/* Focus dans la modale */
+.modal a:focus, .modal input[type='text']:focus, .modal input[type='button']:focus, .modal input[type='file']:focus + label, .modal button:focus, .modal textarea:focus, .modal select:focus {
+	border: inherit;
+	outline: none;
 	box-shadow: 0 0 10px black;
 }
-
+/* Animation lors de la fermeture de la modale */
 .modal[aria-hidden="true"] {
 	animation: fadeOut 300ms both;
 }
-
-.icone-modal {
+/* Icônes 'poubelle' et '4 flèches' des fiches projet de la modale */
+.icon-modal {
 	color: white;
 	background-color: black;
 	padding: 10px 5px 10px 5px;
 	border-radius: 2px;
 }
-
-.icone-modal-container {
+/* Conteneur des icônes 'poubelle' et '4 flèches' des fiches projet de la modale */
+.icon-modal-container {
 	position: absolute;
 	top: 0;
 	right: 0;
 }
-
+/* Formulaire de la modale */
 .form-modal {
 	width: 100%;
 }
@@ -507,7 +527,7 @@ button {
 	color: #B9C5CC;
 	margin-top: 20px;
 }
-
+/* Input file et aperçu de l'image de l'input */
 #preview-picture {
 	height: 100%;
 	margin: auto;
@@ -518,6 +538,7 @@ button {
 	max-height: 250px;
 	display: flex;
 	justify-content: center;
+	z-index: 7;
 }
 
 .add-picture-container {
@@ -545,16 +566,43 @@ button {
 	margin-bottom: 7px;
 	font-weight: 500;
 	cursor: pointer;
+	z-index: 10;
+	position: relative;
 }
 
 #button-add-picture-input{
-	display: none;
+	/* display: none; */
+	z-index: 0;
+	position: relative;
+	top: 48px;
+	height: 10px;
+	width: 20px;
 }
 
 #category-modal, #title-modal-add {
 	font-family: 'Work Sans' ;
 }
+/* Nouvelle flèche pour le select */
+#category-modal {
+	color: white;
+	margin-right: -50px;
+}
 
+#category-modal option {
+	color: black;
+}
+
+#select {
+	display: flex;
+	align-items: center;
+}
+
+.fa-angle-down {
+	color: #6C6C6C;
+	z-index: 2;
+}
+
+/* Animations */
 @keyframes fadeIn {
 	from { opacity: 0; }
 	to { opacity: 1; }

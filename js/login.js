@@ -21,7 +21,7 @@ function login(e) {
             // Message d'erreur
             document
             .getElementById('error-login')
-            .textContent = "E-mail ou mot de passe invalide";
+            .textContent = "Une erreur est survenue";
         }
     })
 
@@ -33,6 +33,10 @@ function login(e) {
     })  
 
     .catch(err => {
+        // Message d'erreur
+        document
+        .getElementById('error-login')
+        .textContent = "E-mail ou mot de passe invalide";
         console.log(err);
     })
 };
