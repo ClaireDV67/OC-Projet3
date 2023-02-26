@@ -1,5 +1,6 @@
 // Importation des données et fonctions
 import { worksData, categories } from './get.js';
+import { generateWorks } from './works.js';
 
 // Stockage du token dans une constante
 const token = window.sessionStorage.getItem("token");
@@ -67,8 +68,25 @@ if (token != null) {
 
 
     // Création de la modale
+    const modal1 = document.createElement('aside');
+    document.querySelector('main').appendChild(modal1);
+    modal1.setAttribute('id', 'modal');
+    modal1.setAttribute('aria-hidden', 'true');
+    modal1.setAttribute('role', 'dialog');
+    modal1.setAttribute('aria-labelledby', 'title-modal');
+    modal1.setAttribute('style', 'display: none');
+    modal1.classList.add('modal');
+    modal1.innerHTML = 
+        '<div class="modal-wrapper">'
+            + '<div id="modal-icon"></div>'
+            + '<h4 id="title-modal"></h4>'
+            + '<div id="modal-content"></div>'
+            + '<div class="button-container"></div>'
+        + '</div>'
 
     // Contenu commun
+    // Galerie principale
+    const gallery = document.querySelector('.gallery');
     // Conteneur de la modale
     const modalWrapper = document.querySelector('.modal-wrapper');
     // Titre de la page de la modale
@@ -104,13 +122,12 @@ if (token != null) {
     // Icône 'quatre flèches' présente sur l'image du premier projet de la galerie de la modale
     const iconFirst = document.createElement('button');
     iconFirst.innerHTML = "<i class='fa-solid fa-arrows-up-down-left-right fa-xs icon-modal'></i>";
+    // Message d'erreur
+    const error = document.createElement('span');
     
     // Contenu de la première modale
-    // Suppression des fiches projets
-    // Initialisation du tableau contenant les id des projets supprimés
-    let workDeleted = [];
     // Fonction permettant la suppression des fiches projets
-    function deleteWorks(e, id) {
+    function deleteWorks(e, id, indexWork) {
         e.preventDefault();
         fetch(`http://localhost:5678/api/works/${id}`, {
             method: 'DELETE',
@@ -120,28 +137,12 @@ if (token != null) {
         })
         .then(res => {
             if (res.ok) {
-                //Fiche projet de la galerie de la modale
-                const workModal = document.getElementById(`modal-work-${id}`);
-                // Fiche projet de la galerie principale
-                const workGallery = document.getElementById(`work-${id}`);
-                // Galerie principale
-                const gallery = document.querySelector('.gallery');
-                // Suppression de la fiche projet de la galerie principale
-                gallery.removeChild(workGallery);
-                // Suppression de la fiche projet de la galerie de la modale
-                contentModal.removeChild(workModal);
-                // Ajout de l'icône '4 flèches' sur la nouvelle première fiche projet lorsque l'on supprime la premier projet
-                if (contentModal.childNodes.length > 0) {
-                    // Nouveau premier élément du contenu de la galerie de la modale
-                    const workModalFirst = contentModal.firstElementChild;
-                    // Container des icônes du premier élément du contenu de la modale
-                    const iconContainerFirst = workModalFirst.querySelector('.icon-modal-container');
-                    // Icône "poubelle" du premier élément du contenu de la modale
-                    const iconTrashFirst = workModalFirst.querySelector('.button-trash');
-                    iconContainerFirst.insertBefore(iconFirst, iconTrashFirst);
-                };
-                // Ajout de l'id du projet au tableau des projets supprimés
-                workDeleted.push(id);
+                // Suppresion du projet des galeries de la page et de la modale
+                worksData.splice(indexWork, 1);
+                gallery.innerHTML = '';
+                contentModal.innerHTML = '';
+                generateWorks(worksData);
+                generateWorksModal(worksData);
             }
         })
         .catch(err => {
@@ -151,10 +152,9 @@ if (token != null) {
     
     // Fonction permettant de générer les fiches projets dans la modale
     // Initialisation d'un tableau stockant toutes les fiches projets, même celles ajoutées avec la requête post
-    let addWork = worksData;
-    async function generateWorksModal(addWork) {
+    async function generateWorksModal(worksData) {
         // Création des fiches projets de la modale
-        for (let workElement of addWork) {    
+        for (let workElement of worksData) {    
             // Création d'une fiche projet, rattachée à la galerie de la modale
             const work = document.createElement("figure");
             work.classList.add('modal-work');
@@ -179,10 +179,12 @@ if (token != null) {
             if (work == contentModal.firstElementChild) {
                 const iconTrash = document.querySelector('.button-trash');
                 icon.insertBefore(iconFirst, iconTrash);
-            }
+            };
+            // On récupère l'index de la fiche projet
+            const indexWork = worksData.indexOf(workElement);
             // Appel à la fonction permettant la suppression d'un projet lors du clic sur son icône 'poubelle'
             const trashWorks = document.getElementById(`trash-works-${workElement.id}`);
-            trashWorks.addEventListener('click', (e) => deleteWorks(e, workElement.id));
+            trashWorks.addEventListener('click', (e) => deleteWorks(e, workElement.id, indexWork));
         }
     }
 
@@ -190,8 +192,6 @@ if (token != null) {
     const focusableSelector = "button, a, input, input[type='submit'], input[type='button'], input[type='text'], select, textarea";
     let focusables = [];
     let previouslyFocusedElement = null;
-    // Modale
-    const modal1 = document.getElementById('modal');
     // Générer la modale
     async function generateModal() {
         // Initialisation de la modale
@@ -233,12 +233,7 @@ if (token != null) {
             contentModal.classList.remove('modal2');
             contentModal.classList.add('modal1');
             // Ajout/Rechargement des fiches projets de la galerie
-            generateWorksModal(addWork);
-            // Cas où il y aurait eu suppression de fiches lors d'une précédente ouverture de la modale
-            for (let id of workDeleted) {
-                const workModal = document.getElementById(`modal-work-${id}`);
-                contentModal.removeChild(workModal);
-            }
+            generateWorksModal(worksData);
             // Ajout des éléments focusables présents dans la page dans le tableau
             focusables = Array.from(modal1.querySelectorAll(focusableSelector));
             previouslyFocusedElement = document.querySelector(':focus');
@@ -324,12 +319,7 @@ if (token != null) {
         contentModal.classList.remove('modal2');
         contentModal.classList.add('modal1');
         // Rechargement des fiches projets de la galerie
-        generateWorksModal(addWork);
-        // Cas où il y aurait eu suppression de fiches lors d'une précédente ouverture de la modale
-        for (let id of workDeleted) {
-            const workModal = document.getElementById(`modal-work-${id}`);
-            contentModal.removeChild(workModal);
-        }
+        generateWorksModal(worksData);
         // Ajout des éléments focusables présents dans la page dans le tableau
         focusables = [];
         focusables = Array.from(modal1.querySelectorAll(focusableSelector));
@@ -367,7 +357,7 @@ if (token != null) {
                 + '</div>'
                 + '<label class="label" for="title-modal-add">Titre</label>'
                 + '<input class="text-zone input-modal" id="title-modal-add" type="text" name="title" minlength="3" maxlength="50" required>'
-                + '<label class="label" for="category-modal">Catégorie</label>'
+                + '<label class="label" id="label-category" for="category-modal">Catégorie</label>'
                 + '<div id="select">'
                     + '<select class="text-zone input-modal" id="category-modal" name="category" required>'
                         + '<option value="" selected disabled></option>' 
@@ -407,7 +397,7 @@ if (token != null) {
         // Ajout des catégories aux options du select du formulaire
         for (let categorie of categoriesWorks) {
             const optionCategoriesModal = document.createElement('option');
-            optionCategoriesModal.setAttribute('value', `${categorie.name}`);
+            optionCategoriesModal.setAttribute('value', `${categorie.id}`);
             categoriesModalInput.appendChild(optionCategoriesModal);
             optionCategoriesModal.innerText = `${categorie.name}`;
         }
@@ -416,16 +406,9 @@ if (token != null) {
         function postWork(e) {
             e.preventDefault();
             var formData = new FormData();
-            let categoryId = null;
-            // Récupération de l'id de la catégorie sélectionnée dans le formulaire
-            for (let categorie of categoriesWorks) {
-                if (categorie.name === categoriesModalInput.value) {
-                    categoryId = categorie.id;
-                }
-            }
             formData.append('image', inputButtonAddPicture.files[0], inputButtonAddPicture.files[0].name);
             formData.append('title', titleAddInput.value);
-            formData.append('category', categoryId);
+            formData.append('category', categoriesModalInput.value);
             // Envoi de la requête
             fetch('http://localhost:5678/api/works', {
                 method: 'POST',
@@ -445,7 +428,6 @@ if (token != null) {
                     return res.json();
                 } else {
                     // Message d'erreur
-                    const error = document.createElement('span');
                     error.innerText = 'Une erreur est survenue, veuillez réessayer ultérieurement';
                     error.classList('error');
                     buttonModal.appendChild(error);
@@ -453,29 +435,16 @@ if (token != null) {
             })
             
             .then(value => {
-                // Ajout du projet à la galerie principale
-                // Galerie principale
-                const gallery = document.querySelector(".gallery");
-                // Création d'une fiche projet, rattachée à la galerie
-                const work = document.createElement("figure");
-                work.setAttribute('id', `work-${value.id}`);
-                gallery.appendChild(work);
-                // Création de l'image, rattachée à la fiche projet
-                const imageWork = document.createElement("img");
-                imageWork.src = value.imageUrl;
-                work.appendChild(imageWork);
-                // Création du titre, rattaché à la fiche projet
-                const titleWork = document.createElement("figcaption");
-                titleWork.innerText = value.title;
-                work.appendChild(titleWork);
+                // Ajout du projet à worksData
+                worksData.push(value);
 
-                // Ajout du projet à la galerie de la modale
-                addWork.push(value);
+                // Ajout du projet à la galerie principale
+                gallery.innerHTML = '';
+                generateWorks(worksData);
             })
 
             .catch(err => {
                 // Message d'erreur
-                const error = document.createElement('span');
                 error.innerText = 'Une erreur est survenue, veuillez réessayer ultérieurement';
                 error.classList('error');
                 buttonModal.appendChild(error);
@@ -483,9 +452,20 @@ if (token != null) {
             })
         };
 
+        // Au cas où l'utilisateur aurait rempli le formulaire sans le valider avant de fermer et reviendrait valider un nouveau formulaire
+        // Pour éviter la duplication des événements qui enverraient plusieurs requêtes POST
+        iconClose.addEventListener('click', () => {
+            buttonValidate.removeEventListener('click', postWork);
+        });
+        
+        // Validation de l'input 'Titre'
+        function isValid(value) {
+            return /^[A-Z]/.test(value) && !/[^a-zA-Z\ ]/.test(value);
+        }
+        
         // Fonction réactivant le bouton 'Valider' si le formulaire est entièrement rempli
         function isComplete() {
-            if (inputButtonAddPicture.value != '' && titleAddInput.value != '' && categoriesModalInput.value != '') {
+            if (inputButtonAddPicture.value != '' && titleAddInput.value != '' && isValid(titleAddInput.value) && categoriesModalInput.value != '') {
                 buttonValidate.removeAttribute('disabled');
                 // Appel à la fonction permettant de poster un projet lors du clic sur le bouton 'Valider'
                 buttonValidate.addEventListener('click', postWork);
@@ -508,11 +488,27 @@ if (token != null) {
             isComplete();
         });
         // Appel à la fonction isComplete lors de la détection d'un changement dans l'input text
-        titleAddInput.addEventListener('change', isComplete);
+        titleAddInput.addEventListener('change', () => {
+            if (formModal.querySelector('.error') != undefined) {
+                formModal.removeChild(formModal.querySelector('.error'));
+            }
+            if (isValid(titleAddInput.value) === false) {
+                error.classList.add('error');
+                const labelCategory = document.getElementById('label-category');
+                formModal.insertBefore(error, labelCategory);
+                error.innerText = 'Le titre doit commencer par une majuscule et ne contenir que des lettres';
+            } else {
+                isComplete();
+            };
+        });
         // Appel à la fonction isComplete lors de la détection d'un changement dans le select
         categoriesModalInput.addEventListener('change', isComplete);
         // Appel à la fonction retour à la première page de la modale lors du clic sur l'icône 'croix'
-        iconBack.addEventListener('click', backModal);
+        iconBack.addEventListener('click', (e) => {
+            // On supprime l'écouteur d'événement au cas où l'utilisateur aurait rempli le formulaire sans le valider
+            buttonValidate.removeEventListener('click', postWork);
+            backModal(e);
+        });
         // Ajout des éléments focusables présents dans la page dans le tableau
         focusables = [];
         focusables = Array.from(modal1.querySelectorAll(focusableSelector));

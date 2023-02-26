@@ -280,6 +280,7 @@ a {
 /* Erreurs */
 .error {
 	color: red;
+	font-size: 12px;
 	margin: 20px;
 }
 
@@ -584,12 +585,8 @@ button {
 }
 /* Nouvelle flèche pour le select */
 #category-modal {
-	color: white;
+	appearance: none;
 	margin-right: -50px;
-}
-
-#category-modal option {
-	color: black;
 }
 
 #select {

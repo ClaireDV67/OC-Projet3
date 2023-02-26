@@ -5,7 +5,7 @@ import { worksData, categories } from './get.js';
 // Fiches projets
 
 // Création de la fonction permettant de générer les fiches projets
-async function generateWorks(works) {
+export async function generateWorks(works) {
     // Galerie
     const gallery = document.querySelector(".gallery");
     if (works == null) {
@@ -46,14 +46,14 @@ async function generateFilters(categories) {
         filters.style.display = 'none';
     } else {
         // Vérification de l'unicité de chaque nom de catégorie
-        const categoriesNames = new Set();
+        const categoriesSet = new Set();
         // Création du filtre 'Tous'
-        categoriesNames.add("Tous");
+        categoriesSet.add({id: 0, name: 'Tous'});
         for (let i in categories) {
-            categoriesNames.add(categories[i].name)
+            categoriesSet.add(categories[i])
         };
         // Création des boutons filtres
-        for (let categorie of categoriesNames) {
+        for (let categorie of categoriesSet) {
             const filter = document.createElement("li");
             filters.appendChild(filter);
             const linkFilter = document.createElement("a");
@@ -61,7 +61,8 @@ async function generateFilters(categories) {
             filter.appendChild(linkFilter);
             filter.classList.add("filter");
             linkFilter.classList.add("link-filter");
-            linkFilter.innerText = `${categorie}`;
+            linkFilter.innerText = `${categorie.name}`;
+            linkFilter.dataset.categoryId = `${categorie.id}`;
         }
 
         // Initialisation du filtre "Tous" comme onglet actif
@@ -74,10 +75,10 @@ async function generateFilters(categories) {
         for (let filter of buttonFilter) {
             filter.addEventListener("click", function () {
                 const filteredWorks = worksData.filter(function (work) {
-                    if (filter.innerText === "Tous") {
+                    if (filter.dataset.categoryId == 0) {
                         return worksData;
                     } else {
-                        return work.category.name === filter.innerText;
+                        return work.categoryId == filter.dataset.categoryId;
                     }
                 });
                 // On affecte la classe donnant le style de l'onglet actif au filtre actuellement actif
