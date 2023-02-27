@@ -1,17 +1,19 @@
 // Importation des données des requêtes GET pour obtenir les projets et les catégories
-import { worksData, categories } from "./get.js";
+import { worksData, categories } from "./data.js";
 
+// Galerie
+const gallery = document.querySelector(".gallery");
+
+// Si aucune donnée
+const empty = document.createElement("span");
+empty.classList.add("empty");
 
 // Fiches projets
 
 // Création de la fonction permettant de générer les fiches projets
 export async function generateWorks(works) {
-	// Galerie
-	const gallery = document.querySelector(".gallery");
-	if (works == null) {
+	if (works == null || works == []) {
 		// Cas où il n'y aurait pas de projet
-		const empty = document.createElement("span");
-		empty.classList.add("empty");
 		empty.innerText = "Galerie vide";
 		gallery.appendChild(empty);
 	} else {
@@ -19,7 +21,6 @@ export async function generateWorks(works) {
 		for (let workElement of works) {	
 			// Création d'une fiche projet, rattachée à la galerie
 			const work = document.createElement("figure");
-			work.setAttribute("id", `work-${workElement.id}`);
 			gallery.appendChild(work);
 			// Création de l'image, rattachée à la fiche projet
 			const imageWork = document.createElement("img");
@@ -85,8 +86,14 @@ async function generateFilters(categories) {
 				document.querySelector(".filter-active").classList.remove("filter-active");
 				filter.parentElement.classList.add("filter-active");
 				// On génère les projets filtrés après avoir effacé le contenu de la galerie précédente
-				document.querySelector(".gallery").innerHTML = "";
-				generateWorks(filteredWorks);
+				gallery.innerHTML = "";
+				console.log(filteredWorks);
+				if (filteredWorks.length === 0) {
+					empty.innerText = "Aucun projet";
+					gallery.appendChild(empty);
+				} else {
+					generateWorks(filteredWorks);
+				}
 			});
 		}
 	}

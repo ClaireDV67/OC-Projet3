@@ -18,11 +18,17 @@ function login () {
 		.then(res => {
 			if (res.ok) {
 				return res.json();
-			} else {
-			// Message d"erreur
+			} if (res.status == 404 || res.status == 401) {
+				console.log(res.status);
+				// Message d"erreur
 				document
 					.getElementById("error-login")
 					.textContent = "Erreur dans l’identifiant ou le mot de passe";
+			} else {
+				console.log(res.status);
+				document
+					.getElementById("error-login")
+					.textContent = "Une erreur est survenue, veuillez réessayer ultérieurement";
 			}
 		})
 
@@ -34,10 +40,6 @@ function login () {
 		})  
 
 		.catch(err => {
-			// Message d"erreur
-			document
-				.getElementById("error-login")
-				.textContent = "Erreur dans l’identifiant ou le mot de passe";
 			console.log(err);
 		});
 }

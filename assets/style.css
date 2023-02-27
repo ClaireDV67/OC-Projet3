@@ -572,7 +572,6 @@ button {
 }
 
 #button-add-picture-input{
-	/* display: none; */
 	z-index: 0;
 	position: relative;
 	top: 48px;
@@ -580,13 +579,16 @@ button {
 	width: 20px;
 }
 
-#category-modal, #title-modal-add {
-	font-family: 'Work Sans' ;
+#title-modal-add {
+	font-family: 'Work Sans';
 }
+
 /* Nouvelle flèche pour le select */
 #category-modal {
 	appearance: none;
+	background-color: white;
 	margin-right: -50px;
+	font-family: 'Work Sans';
 }
 
 #select {

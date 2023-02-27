@@ -1,4 +1,4 @@
-import { worksData, categories } from "./get.js";
+import { worksData, categories } from "./data.js";
 import { generateWorks } from "./works.js";
 import { token } from "./administrator.js";
 
@@ -46,7 +46,6 @@ export function edit () {
 	const menu = document.getElementById("menu");
 	const menuLogin = document.getElementById("menu-login");
 	const menuLogout = document.createElement("li");
-	menuLogout.setAttribute("id", "menu-logout");
 	menuLogout.innerHTML = "<a href='#'>logout</a>";
 	menu.replaceChild(menuLogout, menuLogin);
 	function logout(e) {
@@ -66,7 +65,6 @@ export function edit () {
 	// Création de la modale
 	const modal1 = document.createElement("aside");
 	document.querySelector("main").appendChild(modal1);
-	modal1.setAttribute("id", "modal");
 	modal1.setAttribute("aria-hidden", "true");
 	modal1.setAttribute("role", "dialog");
 	modal1.setAttribute("aria-labelledby", "title-modal");
@@ -154,7 +152,6 @@ export function edit () {
 			// Création d'une fiche projet, rattachée à la galerie de la modale
 			const work = document.createElement("figure");
 			work.classList.add("modal-work");
-			work.setAttribute("id", `modal-work-${workElement.id}`);
 			contentModal.appendChild(work);
 			// Ajout de l'image, rattachée à la fiche projet
 			const imageWork = document.createElement("img");
@@ -169,18 +166,17 @@ export function edit () {
 			const icon = document.createElement("span");
 			icon.classList.add("icon-modal-container");
 			// Ajout de l'icône "poubelle" pour chaque fiche projet
-			icon.innerHTML = `<button class="button-trash" id="trash-works-${workElement.id}"><i class="fa-solid fa-trash-can icon-modal fa-xs"></i></button>`;
+			icon.innerHTML = `<button class="button-trash"><i class="fa-solid fa-trash-can icon-modal fa-xs"></i></button>`;
 			work.appendChild(icon);
 			// Ajout de l'icône "4 flèches" à gauche de l"icône "poubelle" sur la première fiche projet
+			const iconTrash = icon.querySelector(".button-trash");
 			if (work == contentModal.firstElementChild) {
-				const iconTrash = document.querySelector(".button-trash");
 				icon.insertBefore(iconFirst, iconTrash);
 			}
 			// On récupère l'index de la fiche projet
 			const indexWork = worksData.indexOf(workElement);
 			// Appel à la fonction permettant la suppression d'un projet lors du clic sur son icône "poubelle"
-			const trashWorks = document.getElementById(`trash-works-${workElement.id}`);
-			trashWorks.addEventListener("click", (e) => deleteWorks(e, workElement.id, indexWork));
+			iconTrash.addEventListener("click", (e) => deleteWorks(e, workElement.id, indexWork));
 		}
 	}
 
@@ -230,7 +226,7 @@ export function edit () {
 			contentModal.classList.add("modal1");
 			// Ajout/Rechargement des fiches projets de la galerie
 			generateWorksModal(worksData);
-			// Ajout des éléments focusables présents dans la page dans le tableau
+			// Ajout des éléments focusables présents sur la page dans le tableau
 			focusables = Array.from(modal1.querySelectorAll(focusableSelector));
 			previouslyFocusedElement = document.querySelector(":focus");
 		}
@@ -287,231 +283,200 @@ export function edit () {
 				focusInModal(e);
 			}
 		});
-	}
-	// Appel à la fonction générant la modale la rendant fonctionnelle
-	generateModal();
 
-	// Fonction pour revenir à la première page de la modale lorsque l'on est sur la seconde page
-	function backModal(e) {
-		e.preventDefault();
-		// Modification du titre de la modale
-		titleModal.innerText = "Galerie photo";
-		// Suppression des boutons de la seconde page de la modale (remise à zéro)
-		while ( buttonModal.firstChild ) {
-			buttonModal.removeChild( buttonModal.firstChild);
+		// Vérification de l'unicité de chaque catégorie pour les options du select du formulaire (mises dans un tableau)
+		const categoriesSet = new Set();
+		for (let i in categories) {
+			categoriesSet.add(categories[i]);
 		}
-		// Suppression des icônes de la seconde page de la modale (remise à zéro)
-		while ( iconModal.firstChild ) {
-			iconModal.removeChild( iconModal.firstChild);
-		}
-		// Ajout de l'icône "croix" à la modale
-		iconModal.appendChild(iconClose);
-		// Ajout des boutons "Ajouter une photo" et "Supprimer la galerie" à la modale
-		buttonModal.appendChild(buttonAdd);
-		buttonModal.appendChild(buttonDelete);
-		// Suppression du contenu principal de la modale
-		contentModal.innerHTML = "";
-		// Changement de classe pour le style display
-		contentModal.classList.remove("modal2");
-		contentModal.classList.add("modal1");
-		// Rechargement des fiches projets de la galerie
-		generateWorksModal(worksData);
-		// Ajout des éléments focusables présents dans la page dans le tableau
-		focusables = [];
-		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
-		previouslyFocusedElement = document.querySelector(":focus");
-	}
+		const categoriesWorks = Array.from(categoriesSet);
 
-	// Vérification de l'unicité de chaque catégorie pour les options du select du formulaire (mises dans un tableau)
-	const categoriesSet = new Set();
-	for (let i in categories) {
-		categoriesSet.add(categories[i]);
-	}
-	const categoriesWorks = Array.from(categoriesSet);
-
-	// Fonction permettant de changer de page dans la modale
-	function changeModal(e) {
-		e.preventDefault();
-		// Ajout du titre de la seconde page de la modale
-		titleModal.innerHTML = "Ajout Photo";
-		// Ajout de l'icône "flèche" permettant de revenir à la première page de la modale
-		iconModal.appendChild(iconBack);
-		// Changement de classe pour le style display
-		contentModal.classList.remove("modal1");
-		contentModal.classList.add("modal2");
-		// Ajout du formulaire dans le contenu principal de la modale
-		contentModal.innerHTML = 
-			"<form class='form-element form-modal'>"
-				+ "<div class='preview-container'>"
-					+ "<img id='preview-picture' style='display: none' src='#' alt='Aperçu image'>"
-					+ "<div class='input-modal add-picture-container'>"
-						+ "<i class='fa-regular fa-image fa-5x'></i>"
-						+ "<input type='file' name='image' accept='.png, .jpeg, .jpg' id='button-add-picture-input'>"
-						+ "<label id='button-add-picture' for='button-add-picture-input'>+ Ajouter photo</label>"
-						+ "<span class='txt-add-picture'>jpg, png : 4mo max</span>"
-					+ "</div>"
-				+ "</div>"
-				+ "<label class='label' for='title-modal-add'>Titre</label>"
-				+ "<input class='text-zone input-modal' id='title-modal-add' type='text' name='title' minlength='3' maxlength='50' required>"
-				+ "<label class='label' id='label-category' for='category-modal'>Catégorie</label>"
-				+ "<div id='select'>"
-					+ "<select class='text-zone input-modal' id='category-modal' name='category' required>"
-						+ "<option value='' selected disabled></option>" 
-					+ "</select>"
-					+ "<i class='fa-solid fa-angle-down fa-lg'></i>"
-				+ "</div>"
-			+ "</form>";
-		// Formulaire
-		const formModal = document.querySelector(".form-modal");
-		// Bouton permettant de choisir une image
-		const inputButtonAddPicture = document.getElementById("button-add-picture-input");
-		// Ajout de la possibilité de voir un aperçu de l'image choisie dans le input file
-		const previewPicture = document.getElementById("preview-picture");
-		const addPictureContainer = document.querySelector(".add-picture-container");
-		inputButtonAddPicture.addEventListener("change", () => {
-			const [file] = inputButtonAddPicture.files;
-			if (file) {
-				previewPicture.src = URL.createObjectURL(file);
-				addPictureContainer.style.display = "none";
-				previewPicture.style.display = null;
-			}
-		});
-		// Suppression des boutons du conteneur boutons de la modale
-		while ( buttonModal.firstChild ) {
-			buttonModal.removeChild( buttonModal.firstChild);
-		}
-		// Ajout du bouton "Valider" à la seconde page de la modale, désactivé à l'ouverture de la page
-		buttonValidate.setAttribute("type", "button");
-		buttonValidate.setAttribute("value", "Valider");
-		buttonValidate.setAttribute("disabled", "");
-		buttonValidate.classList.add("button-modal", "button-add-work");
-		buttonModal.appendChild(buttonValidate);
-		// Input text du formulaire renseignant le titre du projet à ajouter
-		const titleAddInput = document.getElementById("title-modal-add");
-		// Select du formulaire renseignant la catégorie du projet à ajouter
-		const categoriesModalInput = document.getElementById("category-modal");
-		// Ajout des catégories aux options du select du formulaire
-		for (let categorie of categoriesWorks) {
-			const optionCategoriesModal = document.createElement("option");
-			optionCategoriesModal.setAttribute("value", `${categorie.id}`);
-			categoriesModalInput.appendChild(optionCategoriesModal);
-			optionCategoriesModal.innerText = `${categorie.name}`;
-		}
-
-		// Fonction permettant de poster un projet
-		function postWork(e) {
+		// Fonction permettant de changer de page dans la modale
+		function changeModal(e) {
 			e.preventDefault();
-			var formData = new FormData();
-			formData.append("image", inputButtonAddPicture.files[0], inputButtonAddPicture.files[0].name);
-			formData.append("title", titleAddInput.value);
-			formData.append("category", categoriesModalInput.value);
-			// Envoi de la requête
-			fetch("http://localhost:5678/api/works", {
-				method: 'POST',
-				headers: {
-					'accept': 'application/json',
-					'Authorization': `Bearer ${token}`
-				},
-				body: formData
-			})
-				.then(res => {
-					if (res.ok) {
-						// Message informant l'utilisateur de l'envoi de son projet, directement dans le bouton
-						buttonValidate.setAttribute("value", "Envoyé !");
-						buttonValidate.setAttribute("disabled", "");
-						// On supprime l'évènement au cas où l'utilisateur ferait un nouvel ajout sans recharger la page
-						buttonValidate.removeEventListener("click", postWork);
-						return res.json();
-					} else {
+			// Ajout du titre de la seconde page de la modale
+			titleModal.innerHTML = "Ajout Photo";
+			// Ajout de l'icône "flèche" permettant de revenir à la première page de la modale
+			iconModal.appendChild(iconBack);
+			// Changement de classe pour le style display
+			contentModal.classList.remove("modal1");
+			contentModal.classList.add("modal2");
+			// Ajout du formulaire dans le contenu principal de la modale
+			contentModal.innerHTML = 
+				"<form 	class='form-element form-modal'>"
+					+ "<div class='preview-container'>"
+						+ "<img id='preview-picture' style='display: none' src='#' alt='Aperçu image'>"
+						+ "<div class='input-modal add-picture-container'>"
+							+ "<i class='fa-regular fa-image fa-5x'></i>"
+							+ "<input type='file' name='image' accept='.png, .jpeg, .jpg' id='button-add-picture-input'>"
+							+ "<label id='button-add-picture' for='button-add-picture-input'>+ Ajouter photo</label>"
+							+ "<span class='txt-add-picture'>jpg, png : 4mo max</span>"
+						+ "</div>"
+					+ "</div>"
+					+ "<label class='label' for='title-modal-add'>Titre</label>"
+					+ "<input class='text-zone input-modal' id='title-modal-add' type='text' name='title' minlength='3' maxlength='50' required>"
+					+ "<label class='label' id='label-category' for='category-modal'>Catégorie</label>"
+					+ "<div id='select'>"
+						+ "<select class='text-zone input-modal' id='category-modal' name='category' required>"
+							+ "<option value='' selected disabled></option>" 
+						+ "</select>"
+						+ "<i class='fa-solid fa-angle-down fa-lg'></i>"
+					+ "</div>"
+				+ "</form>";
+			// Formulaire
+			const formModal = document.querySelector(".form-modal");
+			// Bouton permettant de choisir une image
+			const inputButtonAddPicture = document.getElementById("button-add-picture-input");
+			// Ajout de la possibilité de voir un aperçu de l'image choisie dans le input file
+			const previewPicture = document.getElementById("preview-picture");
+			const addPictureContainer = document.querySelector(".add-picture-container");
+			inputButtonAddPicture.addEventListener("change", () => {
+				const [file] = inputButtonAddPicture.files;
+				if (file) {
+					previewPicture.src = URL.createObjectURL(file);
+					addPictureContainer.style.display = "none";
+					previewPicture.style.display = null;
+				}
+			});
+			// Suppression des boutons du conteneur boutons de la modale
+			while ( buttonModal.firstChild ) {
+				buttonModal.removeChild( buttonModal.firstChild);
+			}
+			// Ajout du bouton "Valider" à la seconde page de la modale, désactivé à l'ouverture de la page
+			buttonValidate.setAttribute("type", "button");
+			buttonValidate.setAttribute("value", "Valider");
+			buttonValidate.setAttribute("disabled", "");
+			buttonValidate.classList.add("button-modal", "button-add-work");
+			buttonModal.appendChild(buttonValidate);
+			// Input text du formulaire renseignant le titre du projet à ajouter
+			const titleAddInput = document.getElementById("title-modal-add");
+			// Select du formulaire renseignant la catégorie du projet à ajouter
+			const categoriesModalInput = document.getElementById("category-modal");
+			// Ajout des catégories aux options du select du formulaire
+			for (let categorie of categoriesWorks) {
+				const optionCategoriesModal = document.createElement("option");
+				optionCategoriesModal.setAttribute("value", `${categorie.id}`);
+				categoriesModalInput.appendChild(optionCategoriesModal);
+				optionCategoriesModal.innerText = `${categorie.name}`;
+			}
+
+			// Fonction permettant de poster un projet
+			function postWork(e) {
+				e.preventDefault();
+				var formData = new FormData();
+				formData.append("image", inputButtonAddPicture.files[0], inputButtonAddPicture.files[0].name);
+				formData.append("title", titleAddInput.value);
+				formData.append("category", categoriesModalInput.value);
+				// Envoi de la requête
+				fetch("http://localhost:5678/api/works", {
+					method: 'POST',
+					headers: {
+						'accept': 'application/json',
+						'Authorization': `Bearer ${token}`
+					},
+					body: formData
+				})
+					.then(res => {
+						if (res.ok) {
+							// Message informant l'utilisateur de l'envoi de son projet, directement dans le bouton
+							buttonValidate.setAttribute("value", "Envoyé !");
+							buttonValidate.setAttribute("disabled", "");
+							// On supprime l'évènement au cas où l'utilisateur ferait un nouvel ajout sans recharger la page
+							buttonValidate.removeEventListener("click", postWork);
+							return res.json();
+						} else {
+							// Message d'erreur
+							error.innerText = "Une erreur est survenue, veuillez réessayer ultérieurement";
+							error.classList("error");
+							buttonModal.appendChild(error);
+						}
+					})
+				
+					.then(value => {
+						// Ajout du projet à worksData
+						worksData.push(value);
+
+						// Ajout du projet à la galerie principale
+						gallery.innerHTML = "";
+						generateWorks(worksData);
+					})
+
+					.catch(err => {
 						// Message d'erreur
 						error.innerText = "Une erreur est survenue, veuillez réessayer ultérieurement";
 						error.classList("error");
 						buttonModal.appendChild(error);
-					}
-				})
-			
-				.then(value => {
-					// Ajout du projet à worksData
-					worksData.push(value);
+						console.log(err);
+					});
+			}
 
-					// Ajout du projet à la galerie principale
-					gallery.innerHTML = "";
-					generateWorks(worksData);
-				})
-
-				.catch(err => {
-					// Message d'erreur
-					error.innerText = "Une erreur est survenue, veuillez réessayer ultérieurement";
-					error.classList("error");
-					buttonModal.appendChild(error);
-					console.log(err);
-				});
-		}
-
-		// Au cas où l'utilisateur aurait rempli le formulaire sans le valider avant de fermer et reviendrait valider un nouveau formulaire
-		// Pour éviter la duplication des événements qui enverraient plusieurs requêtes POST
-		iconClose.addEventListener("click", () => {
-			buttonValidate.removeEventListener("click", postWork);
-		});
-		
-		// Validation de l'input "Titre"
-		function isValid(value) {
-			return /^[A-Z]/.test(value) && !/[^a-zA-Z\ ]/.test(value) && value.length > 2 && value.length < 50;
-		}
-		
-		// Fonction réactivant le bouton "Valider" si le formulaire est entièrement rempli
-		function isComplete() {
-			if (inputButtonAddPicture.value != "" && titleAddInput.value != "" && isValid(titleAddInput.value) && categoriesModalInput.value != "") {
-				buttonValidate.removeAttribute("disabled");
-				// Appel à la fonction permettant de poster un projet lors du clic sur le bouton "Valider"
-				buttonValidate.addEventListener("click", postWork);
-			} else {
-				buttonValidate.setAttribute("disabled", "");
-				// On supprime l'évènement au cas où l'utilisateur fermerait la modale ou reviendrait en arrière sans recharger la page
+			// Au cas où l'utilisateur aurait rempli le formulaire sans le valider avant de fermer et reviendrait valider un nouveau formulaire
+			// Pour éviter la duplication des événements qui enverraient plusieurs requêtes POST
+			iconClose.addEventListener("click", () => {
 				buttonValidate.removeEventListener("click", postWork);
+			});
+			
+			// Validation de l'input "Titre"
+			function isValid(value) {
+				return /^[A-Z]/.test(value) && !/[^a-zA-Z\ ]/.test(value) && value.length > 2 && value.length < 50;
 			}
-		}
-		// Appel à la fonction isComplete lors de la détection d'un changement dans l'input type file
-		// Et vérification du type de fichier
-		inputButtonAddPicture.addEventListener("change", () => {
-			if (inputButtonAddPicture.files[0].type != "image/jpg" && inputButtonAddPicture.files[0].type != "image/jpeg" && inputButtonAddPicture.files[0].type != "image/png") {
-				const previewContainer = document.querySelector(".preview-container");
-				const errorTypeFile = document.createElement("span");
-				errorTypeFile.innerText = "Type de fichier invalide";
-				errorTypeFile.classList.add("error");
-				formModal.insertBefore(errorTypeFile, previewContainer.nextElementSibling);
+			
+			// Fonction réactivant le bouton "Valider" si le formulaire est entièrement rempli
+			function isComplete() {
+				if (inputButtonAddPicture.value != "" && titleAddInput.value != "" && isValid(titleAddInput.value) && categoriesModalInput.value != "") {
+					buttonValidate.removeAttribute("disabled");
+					// Appel à la fonction permettant de poster un projet lors du clic sur le bouton "Valider"
+					buttonValidate.addEventListener("click", postWork);
+				} else {
+					buttonValidate.setAttribute("disabled", "");
+					// On supprime l'évènement au cas où l'utilisateur fermerait la modale ou reviendrait en arrière sans recharger la page
+					buttonValidate.removeEventListener("click", postWork);
+				}
 			}
-			isComplete();
-		});
-		// Appel à la fonction isComplete lors de la détection d'un changement dans l'input text
-		titleAddInput.addEventListener("change", () => {
-			if (formModal.querySelector(".error") != undefined) {
-				formModal.removeChild(formModal.querySelector(".error"));
-			}
-			if (isValid(titleAddInput.value) === false) {
-				buttonValidate.setAttribute("disabled", "");
-				error.classList.add("error");
-				const labelCategory = document.getElementById("label-category");
-				formModal.insertBefore(error, labelCategory);
-				error.innerText = "Le titre doit commencer par une majuscule, ne contenir que des lettres, et comporter de 3 à 50 caractères";
-			} else {
+			// Appel à la fonction isComplete lors de la détection d'un changement dans l'input type file
+			// Et vérification du type de fichier
+			inputButtonAddPicture.addEventListener("change", () => {
+				if (inputButtonAddPicture.files[0].type != "image/jpg" && inputButtonAddPicture.files[0].type != "image/jpeg" && inputButtonAddPicture.files[0].type != "image/png") {
+					const previewContainer = document.querySelector(".preview-container");
+					const errorTypeFile = document.createElement("span");
+					errorTypeFile.innerText = "Type de fichier invalide";
+					errorTypeFile.classList.add("error");
+					formModal.insertBefore(errorTypeFile, previewContainer.nextElementSibling);
+				}
 				isComplete();
-			}
-		});
-		// Appel à la fonction isComplete lors de la détection d'un changement dans le select
-		categoriesModalInput.addEventListener("change", isComplete);
-		// Appel à la fonction retour à la première page de la modale lors du clic sur l'icône "croix"
-		iconBack.addEventListener("click", (e) => {
-			// On supprime l'écouteur d'événement au cas où l'utilisateur aurait rempli le formulaire sans le valider
-			buttonValidate.removeEventListener("click", postWork);
-			backModal(e);
-		});
-		// Ajout des éléments focusables présents dans la page dans le tableau
-		focusables = [];
-		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
-		previouslyFocusedElement = document.querySelector(":focus");
+			});
+			// Appel à la fonction isComplete lors de la détection d'un changement dans l'input text
+			titleAddInput.addEventListener("change", () => {
+				if (formModal.querySelector(".error") != undefined) {
+					formModal.removeChild(formModal.querySelector(".error"));
+				}
+				if (isValid(titleAddInput.value) === false) {
+					buttonValidate.setAttribute("disabled", "");
+					error.classList.add("error");
+					const labelCategory = document.getElementById("label-category");
+					formModal.insertBefore(error, labelCategory);
+					error.innerText = "Le titre doit commencer par une majuscule, ne contenir que des lettres, et comporter de 3 à 50 caractères";
+				} else {
+					isComplete();
+				}
+			});
+			// Appel à la fonction isComplete lors de la détection d'un changement dans le select
+			categoriesModalInput.addEventListener("change", isComplete);
+			// Appel à la fonction retour à la première page de la modale lors du clic sur l'icône "croix"
+			iconBack.addEventListener("click", (e) => {
+				// On supprime l'écouteur d'événement au cas où l'utilisateur aurait rempli le formulaire sans le valider
+				buttonValidate.removeEventListener("click", postWork);
+				openModal(e);
+			});
+			// Ajout des éléments focusables présents sur la page dans le tableau
+			focusables = Array.from(modal1.querySelectorAll(focusableSelector));
+			previouslyFocusedElement = document.querySelector(":focus");
+		}
+			
+		// Passage à la seconde page de la modale lors du clic sur le bouton "Ajouter une photo" de la première page
+		buttonAdd.addEventListener("click", changeModal);
 	}
-		
-	// Passage à la seconde page de la modale lors du clic sur le bouton "Ajouter une photo" de la première page
-	buttonAdd.addEventListener("click", changeModal);
+
+	// Appel à la fonction générant la modale la rendant fonctionnelle
+	generateModal();
 }
