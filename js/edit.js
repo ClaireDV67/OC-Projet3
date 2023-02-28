@@ -147,9 +147,9 @@ if (token !== null) {
 	}
 		
 	// Fonction permettant de générer les fiches projets dans la modale
-	async function generateWorksModal(worksData) {
+	async function generateWorksModal(worksModal) {
 		// Création des fiches projets de la modale
-		for (let workElement of worksData) {	
+		for (let workElement of worksModal) {	
 			// Création d'une fiche projet, rattachée à la galerie de la modale
 			const work = document.createElement("figure");
 			work.classList.add("modal-work");
@@ -175,7 +175,7 @@ if (token !== null) {
 				icon.insertBefore(iconFirst, iconTrash);
 			}
 			// On récupère l'index de la fiche projet
-			const indexWork = worksData.indexOf(workElement);
+			const indexWork = worksModal.indexOf(workElement);
 			// Appel à la fonction permettant la suppression d'un projet lors du clic sur son icône "poubelle"
 			iconTrash.addEventListener("click", (e) => deleteWorks(e, workElement.id, indexWork));
 		}
