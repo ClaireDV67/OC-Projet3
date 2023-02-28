@@ -87,7 +87,6 @@ async function generateFilters(categories) {
 				filter.parentElement.classList.add("filter-active");
 				// On génère les projets filtrés après avoir effacé le contenu de la galerie précédente
 				gallery.innerHTML = "";
-				console.log(filteredWorks);
 				if (filteredWorks.length === 0) {
 					empty.innerText = "Aucun projet";
 					gallery.appendChild(empty);
