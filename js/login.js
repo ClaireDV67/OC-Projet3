@@ -19,13 +19,11 @@ function login () {
 			if (res.ok) {
 				return res.json();
 			} if (res.status == 404 || res.status == 401) {
-				console.log(res.status);
 				// Message d"erreur
 				document
 					.getElementById("error-login")
 					.textContent = "Erreur dans l’identifiant ou le mot de passe";
 			} else {
-				console.log(res.status);
 				document
 					.getElementById("error-login")
 					.textContent = "Une erreur est survenue, veuillez réessayer ultérieurement";

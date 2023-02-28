@@ -67,14 +67,14 @@ if (token !== null) {
 
 
 	// Création de la modale
-	const modal1 = document.createElement("aside");
-	document.querySelector("main").appendChild(modal1);
-	modal1.setAttribute("aria-hidden", "true");
-	modal1.setAttribute("role", "dialog");
-	modal1.setAttribute("aria-labelledby", "title-modal");
-	modal1.setAttribute("style", "display: none");
-	modal1.classList.add("modal");
-	modal1.innerHTML = 
+	const modal = document.createElement("aside");
+	document.querySelector("main").appendChild(modal);
+	modal.setAttribute("aria-hidden", "true");
+	modal.setAttribute("role", "dialog");
+	modal.setAttribute("aria-labelledby", "title-modal");
+	modal.setAttribute("style", "display: none");
+	modal.classList.add("modal");
+	modal.innerHTML = 
 		"<div class='modal-wrapper'>"
 			+ "<div id='modal-icon'></div>"
 			+ "<h4 id='title-modal'></h4>"
@@ -186,17 +186,13 @@ if (token !== null) {
 	let focusables = [];
 	let previouslyFocusedElement = null;
 
-	// Initialisation de la modale
-	let modal = null;
-
 	// Ouverture de la première page de la modale
 	function openModal(e) {
 		e.preventDefault();
 		// Ouverture de la modale
-		modal1.style.display = null;
-		modal1.removeAttribute("aria-hidden");
-		modal1.setAttribute("aria-modal", "true");
-		modal = modal1;
+		modal.style.display = null;
+		modal.removeAttribute("aria-hidden");
+		modal.setAttribute("aria-modal", "true");
 		// Fermeture de la modale lors du clic sur la page
 		modal.addEventListener("click", closeModal);
 		// Fermeture de la modale au clic sur l'icône "croix"
@@ -227,7 +223,7 @@ if (token !== null) {
 		// Ajout/Rechargement des fiches projets de la galerie
 		generateWorksModal(worksData);
 		// Ajout des éléments focusables présents sur la page dans le tableau
-		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
+		focusables = Array.from(modal.querySelectorAll(focusableSelector));
 		previouslyFocusedElement = document.querySelector(":focus");
 	}
 
@@ -468,7 +464,7 @@ if (token !== null) {
 			openModal(e);
 		});
 		// Ajout des éléments focusables présents sur la page dans le tableau
-		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
+		focusables = Array.from(modal.querySelectorAll(focusableSelector));
 		previouslyFocusedElement = document.querySelector(":focus");
 	}
 		
