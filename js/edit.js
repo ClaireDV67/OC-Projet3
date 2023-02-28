@@ -1,5 +1,6 @@
 import { worksData, categories } from "./data.js";
 import { generateWorks } from "./works.js";
+import { generateOneWork } from "./generateOneWork.js";
 
 // Stockage du token dans une constante
 export const token = window.sessionStorage.getItem("token");
@@ -54,7 +55,6 @@ if (token !== null) {
 	menu.replaceChild(menuLogout, menuLogin);
 	function logout(e) {
 		e.preventDefault();
-		window.sessionStorage.removeItem("userId");
 		window.sessionStorage.removeItem("token");
 		location.reload();
 	}
@@ -67,14 +67,14 @@ if (token !== null) {
 
 
 	// Création de la modale
-	const modal = document.createElement("aside");
-	document.querySelector("main").appendChild(modal);
-	modal.setAttribute("aria-hidden", "true");
-	modal.setAttribute("role", "dialog");
-	modal.setAttribute("aria-labelledby", "title-modal");
-	modal.setAttribute("style", "display: none");
-	modal.classList.add("modal");
-	modal.innerHTML = 
+	const modal1 = document.createElement("aside");
+	document.querySelector("main").appendChild(modal1);
+	modal1.setAttribute("aria-hidden", "true");
+	modal1.setAttribute("role", "dialog");
+	modal1.setAttribute("aria-labelledby", "title-modal");
+	modal1.setAttribute("style", "display: none");
+	modal1.classList.add("modal");
+	modal1.innerHTML = 
 		"<div class='modal-wrapper'>"
 			+ "<div id='modal-icon'></div>"
 			+ "<h4 id='title-modal'></h4>"
@@ -133,12 +133,21 @@ if (token !== null) {
 		})
 			.then(res => {
 				if (res.ok) {
-					// Suppresion du projet des galeries de la page et de la modale
+					// Suppression du projet des galeries de la page et de la modale
 					worksData.splice(indexWork, 1);
-					gallery.innerHTML = "";
-					contentModal.innerHTML = "";
-					generateWorks(worksData);
-					generateWorksModal(worksData);
+					const workModalDeleted = document.getElementById(`work-modal-${id}`);
+					gallery.removeChild(document.getElementById(`work-${id}`));
+					contentModal.removeChild(workModalDeleted);
+					// Ajout de l'icône '4 flèches' sur la nouvelle première fiche projet lorsque l'on supprime la premier projet
+					if (contentModal.childNodes.length > 0) {
+						// Nouveau premier élément du contenu de la galerie de la modale
+						const workModalFirst = contentModal.firstElementChild;
+						// Container des icônes du premier élément du contenu de la modale
+						const iconContainerFirst = workModalFirst.querySelector('.icon-modal-container');
+						// Icône "poubelle" du premier élément du contenu de la modale
+						const iconTrashFirst = workModalFirst.querySelector('.button-trash');
+						iconContainerFirst.insertBefore(iconFirst, iconTrashFirst);
+					};
 				}
 			})
 			.catch(err => {
@@ -153,6 +162,7 @@ if (token !== null) {
 			// Création d'une fiche projet, rattachée à la galerie de la modale
 			const work = document.createElement("figure");
 			work.classList.add("modal-work");
+			work.setAttribute("id", `work-modal-${workElement.id}`);
 			contentModal.appendChild(work);
 			// Ajout de l'image, rattachée à la fiche projet
 			const imageWork = document.createElement("img");
@@ -171,6 +181,7 @@ if (token !== null) {
 			work.appendChild(icon);
 			// Ajout de l'icône "4 flèches" à gauche de l"icône "poubelle" sur la première fiche projet
 			const iconTrash = icon.querySelector(".button-trash");
+			iconTrash.setAttribute("id", `trash-${workElement.id}`);
 			if (work == contentModal.firstElementChild) {
 				icon.insertBefore(iconFirst, iconTrash);
 			}
@@ -185,14 +196,16 @@ if (token !== null) {
 	const focusableSelector = "button, a, input, input[type='submit'], input[type='button'], input[type='text'], select, textarea";
 	let focusables = [];
 	let previouslyFocusedElement = null;
-
+	// Initialisation de la modale
+	let modal = null;
 	// Ouverture de la première page de la modale
 	function openModal(e) {
 		e.preventDefault();
 		// Ouverture de la modale
-		modal.style.display = null;
-		modal.removeAttribute("aria-hidden");
-		modal.setAttribute("aria-modal", "true");
+		modal1.style.display = null;
+		modal1.removeAttribute("aria-hidden");
+		modal1.setAttribute("aria-modal", "true");
+		modal = modal1;
 		// Fermeture de la modale lors du clic sur la page
 		modal.addEventListener("click", closeModal);
 		// Fermeture de la modale au clic sur l'icône "croix"
@@ -223,7 +236,7 @@ if (token !== null) {
 		// Ajout/Rechargement des fiches projets de la galerie
 		generateWorksModal(worksData);
 		// Ajout des éléments focusables présents sur la page dans le tableau
-		focusables = Array.from(modal.querySelectorAll(focusableSelector));
+		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
 		previouslyFocusedElement = document.querySelector(":focus");
 	}
 
@@ -392,8 +405,7 @@ if (token !== null) {
 					worksData.push(value);
 
 					// Ajout du projet à la galerie principale
-					gallery.innerHTML = "";
-					generateWorks(worksData);
+					generateOneWork(value);
 				})
 
 				.catch(err => {
@@ -464,7 +476,7 @@ if (token !== null) {
 			openModal(e);
 		});
 		// Ajout des éléments focusables présents sur la page dans le tableau
-		focusables = Array.from(modal.querySelectorAll(focusableSelector));
+		focusables = Array.from(modal1.querySelectorAll(focusableSelector));
 		previouslyFocusedElement = document.querySelector(":focus");
 	}
 		
