@@ -1,9 +1,8 @@
 import { worksData, categories } from "./data.js";
-import { generateWorks } from "./works.js";
 import { generateOneWork } from "./generateOneWork.js";
 
 // Stockage du token dans une constante
-export const token = window.sessionStorage.getItem("token");
+const token = window.sessionStorage.getItem("token");
 
 // Si présence du token dans sessionStorage, poursuite en mode édition
 if (token !== null) {
@@ -449,6 +448,7 @@ if (token !== null) {
 				errorTypeFile.innerText = "Type de fichier invalide";
 				errorTypeFile.classList.add("error");
 				formModal.insertBefore(errorTypeFile, previewContainer.nextElementSibling);
+				inputButtonAddPicture.value = "";
 			}
 			isComplete();
 		});
